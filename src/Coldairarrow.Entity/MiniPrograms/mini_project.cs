@@ -20,7 +20,7 @@ namespace Coldairarrow.Entity.MiniPrograms
         /// <summary>
         /// 项目地编号
         /// </summary>
-        public String Project { get; set; }
+        public String Project_Code { get; set; }
 
         /// <summary>
         /// 项目地名称

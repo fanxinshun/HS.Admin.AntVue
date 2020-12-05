@@ -10,18 +10,18 @@
       <!-- <notice-icon class="action" /> -->
       <a-dropdown>
         <span class="action ant-dropdown-link">
-          <a-avatar size="small" icon="user" />
-          <span>{{ op().UserName }}</span>
+          <a-avatar size="small" icon="appstore" />
+          <span>{{ UserInfo.projectName }}</span>
         </span>
         <a-menu slot="overlay">
-          <a-menu-item v-for="item in ProjectList" :key="item.Id">{{ item.Text }}
+          <a-menu-item v-for="item in ProjectList" :key="item.Id" @click="projectSelected(item.Id)">{{ item.Project_Name }}
           </a-menu-item>
         </a-menu>
       </a-dropdown>
       <a-dropdown>
         <span class="action ant-dropdown-link user-dropdown-menu">
           <a-avatar size="small" icon="user" />
-          <span>{{ op().UserName }}</span>
+          <span>{{ UserInfo.UserName }}</span>
         </span>
         <a-menu slot="overlay" class="user-dropdown-menu-wrapper">
           <a-menu-item key="1">
@@ -57,27 +57,32 @@
       // NoticeIcon
       ChangePwdForm
     },
+    mounted() {
+      this.op()
+    },
     data() {
       return {
-        project_id: '0',
-        ProjectList: [{
-          Id: '0',
-          Text: '衣服'
-        }, {
-          Id: '1',
-          Text: '裤子'
-        }]
+        ProjectList: [],
+        UserInfo: {
+          projectName: '',
+          UserName: ''
+        }
       }
     },
     methods: {
       op() {
-        return OperatorCache.info
+        this.UserInfo.UserName = OperatorCache.info.UserName
+        this.ProjectList = OperatorCache.projectList
+
+        let lastProject = this.ProjectList.find(x => x.Id == OperatorCache.info.Last_Interview_Project)
+        if (lastProject) {
+          this.UserInfo.projectName = lastProject.Project_Name
+        }
       },
       // ...mapActions(['Logout']),
       // ...mapGetters(['nickname', 'avatar']),
       handleLogout() {
         const that = this
-
         this.$confirm({
           title: '提示',
           content: '真的要注销登录吗 ?',
@@ -92,8 +97,8 @@
       handleChangePwd() {
         this.$refs.changePwd.open()
       },
-      projectSelected() {
-        this.project_id = '1'
+      projectSelected(project_id) {
+        OperatorCache.changeProject(project_id)
       }
     }
   }

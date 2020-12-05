@@ -1,9 +1,12 @@
-﻿using Coldairarrow.Util;
+﻿using Coldairarrow.Business.MiniPrograms;
+using Coldairarrow.Util;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Coldairarrow.Api.Controllers.Base_Manage
 {
@@ -40,6 +43,37 @@ namespace Coldairarrow.Api.Controllers.Base_Manage
                 status = "done",
                 thumbUrl = url,
                 url = url
+            };
+
+            return JsonContent(res.ToJson());
+        }
+
+        /// <summary>
+        /// 文件上传到FastDFS服务器
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> UploadFile()
+        {
+            var file = Request.Form.Files.FirstOrDefault();
+            if (file == null)
+                return JsonContent(new { status = "error" }.ToJson());
+
+            string fileNmae = file.FileName;
+            Stream stream = file.OpenReadStream();
+            if (stream == null || string.IsNullOrEmpty(fileNmae))
+            {
+                return JsonContent(new { status = "error" }.ToJson());
+            }
+            string file_extension = Path.GetExtension(fileNmae);
+            string image_url = await FastDFSHelper.UpdateFile(stream, file_extension);
+
+            var res = new
+            {
+                name = file.FileName,
+                status = "done",
+                thumbUrl = image_url,
+                url = image_url
             };
 
             return JsonContent(res.ToJson());

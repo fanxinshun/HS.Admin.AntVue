@@ -68,6 +68,17 @@ namespace Coldairarrow.Api.Controllers.Base_Manage
             await _userBus.DeleteDataAsync(ids);
         }
 
+        /// <summary>
+        /// 更新当前登录用户信息【最后访问的项目】
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task UpdateUserLastInterviewProject(IdInputDTO dto)
+        {
+            await _userBus.UpdateUserLastInterviewProject(dto.id);
+        }
+
         #endregion
     }
 }

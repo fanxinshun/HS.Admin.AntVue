@@ -10,6 +10,7 @@ namespace Coldairarrow.Entity
         public string RoleNames { get => string.Join(",", RoleNameList ?? new List<string>()); }
         public List<string> RoleIdList { get; set; }
         public List<string> RoleNameList { get; set; }
+        public List<string> ProjectIdList { get; set; }
         public RoleTypes RoleType
         {
             get

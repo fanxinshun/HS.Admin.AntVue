@@ -2,6 +2,7 @@
 using Coldairarrow.Business.Cache;
 using Coldairarrow.Entity;
 using Coldairarrow.Entity.Base_Manage;
+using Coldairarrow.Entity.MiniPrograms;
 using Coldairarrow.IBusiness;
 using Coldairarrow.Util;
 using EFCore.Sharding;
@@ -78,11 +79,23 @@ namespace Coldairarrow.Business.Base_Manage
                                            RoleId = b.Id,
                                            b.RoleName
                                        }).ToListAsync();
+
+                var userProjects = await (from a in Db.GetIQueryable<mini_project_user>()
+                                          join b in Db.GetIQueryable<mini_project>() on a.Project_Id equals b.Id
+                                          where userIds.Contains(a.User_Id)
+                                          select new
+                                          {
+                                              a.User_Id,
+                                              a.Project_Id,
+                                              b.Project_Name
+                                          }).ToListAsync();
+
                 users.ForEach(aUser =>
                 {
                     var roleList = userRoles.Where(x => x.UserId == aUser.Id);
                     aUser.RoleIdList = roleList.Select(x => x.RoleId).ToList();
                     aUser.RoleNameList = roleList.Select(x => x.RoleName).ToList();
+                    aUser.ProjectIdList = userProjects.Select(x => x.Project_Id).ToList();
                 });
             }
         }
@@ -113,7 +126,7 @@ namespace Coldairarrow.Business.Base_Manage
         public async Task AddDataAsync(UserEditInputDTO input)
         {
             await InsertAsync(_mapper.Map<Base_User>(input));
-            await SetUserRoleAsync(input.Id, input.RoleIdList);
+            await SetUserRoleAndProjectAsync(input.Id, input.RoleIdList, input.ProjectIdList);
         }
 
         [DataEditLog(UserLogType.系统用户管理, "RealName", "用户")]
@@ -127,7 +140,7 @@ namespace Coldairarrow.Business.Base_Manage
                 throw new BusException("禁止更改超级管理员！");
 
             await UpdateAsync(_mapper.Map<Base_User>(input));
-            await SetUserRoleAsync(input.Id, input.RoleIdList);
+            await SetUserRoleAndProjectAsync(input.Id, input.RoleIdList, input.ProjectIdList);
             await _userCache.UpdateCacheAsync(input.Id);
         }
 
@@ -143,11 +156,25 @@ namespace Coldairarrow.Business.Base_Manage
             await _userCache.UpdateCacheAsync(ids);
         }
 
+        /// <summary>
+        /// 更新当前登录用户信息【最后访问的项目】
+        /// </summary>
+        /// <returns></returns>
+        public async Task UpdateUserLastInterviewProject(string project_id)
+        {
+            var userInfo = await GetEntityAsync(_operator?.UserId);
+            if (userInfo != null)
+            {
+                userInfo.Last_Interview_Project = project_id;
+                await UpdateAsync(userInfo);
+                await _userCache.UpdateCacheAsync(_operator?.UserId);
+            }
+        }
         #endregion
 
         #region 私有成员
 
-        private async Task SetUserRoleAsync(string userId, List<string> roleIds)
+        private async Task SetUserRoleAndProjectAsync(string userId, List<string> roleIds, List<string> projectIds)
         {
             roleIds = roleIds ?? new List<string>();
             var userRoleList = roleIds.Select(x => new Base_UserRole
@@ -159,6 +186,19 @@ namespace Coldairarrow.Business.Base_Manage
             }).ToList();
             await Db.DeleteAsync<Base_UserRole>(x => x.UserId == userId);
             await Db.InsertAsync(userRoleList);
+
+            projectIds = projectIds ?? new List<string>();
+            var projectList = projectIds.Select(x => new mini_project_user
+            {
+                Id = IdHelper.GetId(),
+                CreateTime = DateTime.Now,
+                CreatorId = _operator?.UserId,
+                User_Id = userId,
+                Project_Id = x
+            }).ToList();
+            await Db.DeleteAsync<mini_project_user>(x => x.User_Id == userId);
+            await Db.InsertAsync(projectList);
+
         }
 
         #endregion

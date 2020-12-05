@@ -62,6 +62,11 @@ namespace Coldairarrow.Entity.Base_Manage
         /// 所属部门Id
         /// </summary>
         public String DepartmentId { get; set; }
+        
+        /// <summary>
+        /// 最后访问的项目
+        /// </summary>
+        public String Last_Interview_Project { get; set; }
     }
 
     public enum Sex

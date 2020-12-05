@@ -11,6 +11,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="MiniPrograms\Isys_attachmentBusiness.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Coldairarrow.Entity\02.Coldairarrow.Entity.csproj" />
     <ProjectReference Include="..\Coldairarrow.Util\01.Coldairarrow.Util.csproj" />
   </ItemGroup>

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <a-card :bordered="false">
     <div class="table-operator">
       <a-button type="primary" icon="plus" @click="hanldleAdd()">新建</a-button>
@@ -11,18 +11,15 @@
       >删除</a-button>
       <a-button type="primary" icon="redo" @click="getDataList()">刷新</a-button>
     </div>
-<!-- 
+
     <div class="table-page-search-wrapper">
       <a-form layout="inline">
         <a-row :gutter="10">
           <a-col :md="4" :sm="24">
             <a-form-item label="查询类别">
               <a-select allowClear v-model="queryParam.condition">
-                <a-select-option key="OwnerShip">平台地区</a-select-option>
-                <a-select-option key="Module_Code">模组编码</a-select-option>
-                <a-select-option key="Module_Name">模组名称</a-select-option>
-                <a-select-option key="Parent_Module_Id">父级模组</a-select-option>
-                <a-select-option key="Remark">说明</a-select-option>
+                <a-select-option key="Component_Code">组件编码</a-select-option>
+                <a-select-option key="Component_Name">组件名称</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
@@ -37,15 +34,14 @@
           </a-col>
         </a-row>
       </a-form>
-    </div> -->
+    </div>
 
     <a-table
-      v-if="data && data.length"
       ref="table"
       :columns="columns"
       :rowKey="row => row.Id"
       :dataSource="data"
-      :pagination="false"
+      :pagination="pagination"
       :loading="loading"
       @change="handleTableChange"
       :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
@@ -69,9 +65,9 @@
 import EditForm from './EditForm'
 
 const columns = [
-  { title: '模组名称', dataIndex: 'Module_Name', width: '10%' },
-  { title: '排序', dataIndex: 'Sort', width: '10%' },
-  { title: '说明', dataIndex: 'Remark', width: '10%' },
+  { title: '组件编码', dataIndex: 'Component_Code', width: '10%' },
+  { title: '组件名称', dataIndex: 'Component_Name', width: '10%' },
+  { title: '序号', dataIndex: 'Sort', width: '10%' },
   { title: '操作', dataIndex: 'action', scopedSlots: { customRender: 'action' } }
 ]
 
@@ -110,7 +106,7 @@ export default {
 
       this.loading = true
       this.$http
-        .post('/MiniPrograms/mini_mainpage_module/GetTreeDataList', {
+        .post('/MiniPrograms/sys_component/GetDataList', {
           PageIndex: this.pagination.current,
           PageRows: this.pagination.pageSize,
           SortField: this.sorter.field || 'Id',
@@ -144,7 +140,7 @@ export default {
         title: '确认删除吗?',
         onOk() {
           return new Promise((resolve, reject) => {
-            thisObj.$http.post('/MiniPrograms/mini_mainpage_module/DeleteData', ids).then(resJson => {
+            thisObj.$http.post('/MiniPrograms/sys_component/DeleteData', ids).then(resJson => {
               resolve()
 
               if (resJson.Success) {

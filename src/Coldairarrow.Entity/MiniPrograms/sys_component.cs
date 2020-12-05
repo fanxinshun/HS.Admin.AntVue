@@ -5,10 +5,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Coldairarrow.Entity.MiniPrograms
 {
     /// <summary>
-    /// mini_mainpage_module
+    /// sys_component
     /// </summary>
-    [Table("mini_mainpage_module")]
-    public class mini_mainpage_module
+    [Table("sys_component")]
+    public class sys_component
     {
 
         /// <summary>
@@ -18,34 +18,19 @@ namespace Coldairarrow.Entity.MiniPrograms
         public String Id { get; set; }
 
         /// <summary>
-        /// 项目地
+        /// 组件编码
         /// </summary>
-        public String Project_Id { get; set; }
+        public String Component_Code { get; set; }
 
         /// <summary>
-        /// 模组编码
+        /// 组件名称
         /// </summary>
-        public String Module_Code { get; set; }
-
-        /// <summary>
-        /// 模组名称
-        /// </summary>
-        public String Module_Name { get; set; }
-
-        /// <summary>
-        /// 父级模组
-        /// </summary>
-        public String Parent_Module_Id { get; set; }
+        public String Component_Name { get; set; }
 
         /// <summary>
         /// 排序字段
         /// </summary>
         public Single? Sort { get; set; }
-
-        /// <summary>
-        /// 说明
-        /// </summary>
-        public String Remark { get; set; }
 
         /// <summary>
         /// 创建人Id

@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using Coldairarrow.Business.MiniPrograms;
 using Coldairarrow.Entity.Base_Manage;
 using Coldairarrow.IBusiness;
 using Coldairarrow.Util;
 using EFCore.Sharding;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,11 +16,13 @@ namespace Coldairarrow.Business.Base_Manage
     {
         readonly IOperator _operator;
         readonly IMapper _mapper;
-        public HomeBusiness(IDbAccessor db, IOperator @operator, IMapper mapper)
+        readonly Imini_project_userBusiness _mini_project_userBusiness;
+        public HomeBusiness(IDbAccessor db, IOperator @operator, IMapper mapper, Imini_project_userBusiness mini_project_userBusiness)
             : base(db)
         {
             _operator = @operator;
             _mapper = mapper;
+            _mini_project_userBusiness = mini_project_userBusiness;
         }
 
         public async Task<string> SubmitLoginAsync(LoginInputDTO input)
@@ -30,6 +34,17 @@ namespace Coldairarrow.Business.Base_Manage
 
             if (theUser.IsNullOrEmpty())
                 throw new BusException("账号或密码不正确！");
+
+            List<UserProjectDTO> projusers = await _mini_project_userBusiness.GetUserProjectListAsync(theUser.UserName);
+            if (projusers?.Count > 0)
+            {
+                var defaultProject = projusers.FirstOrDefault(x => x.Id == theUser.Last_Interview_Project)?.Id;
+                if (theUser.Last_Interview_Project != defaultProject)
+                {
+                    theUser.Last_Interview_Project = defaultProject;
+                    await UpdateAsync(theUser);
+                }
+            }
 
             //生成token,有效期一天
             JWTPayload jWTPayload = new JWTPayload

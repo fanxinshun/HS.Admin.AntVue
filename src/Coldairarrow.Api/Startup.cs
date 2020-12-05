@@ -24,6 +24,7 @@ namespace Coldairarrow.Api
         {
             services.AddFxServices();
             services.AddAutoMapper();
+            services.AddCors(op => { op.AddPolicy("api", option => { option.SetIsOriginAllowed(origin => true).AllowAnyHeader().AllowAnyMethod().AllowCredentials(); }); });
             services.AddEFCoreSharding(config =>
             {
                 var dbOptions = Configuration.GetSection("Database:BaseDb").Get<DatabaseOptions>();
@@ -63,13 +64,14 @@ namespace Coldairarrow.Api
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors("api");
             //允许body重用
             app.Use(next => context =>
             {
                 context.Request.EnableBuffering();
                 return next(context);
             })
-            .UseMiddleware<CorsMiddleware>()//跨域
+            //.UseMiddleware<CorsMiddleware>()//跨域
             .UseDeveloperExceptionPage()
             .UseStaticFiles(new StaticFileOptions
             {

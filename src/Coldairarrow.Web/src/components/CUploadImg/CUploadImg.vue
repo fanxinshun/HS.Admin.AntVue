@@ -1,7 +1,7 @@
 <template>
   <div class="clearfix">
     <a-upload
-      :action="`${$rootUrl}/Base_Manage/Upload/UploadFileByForm`"
+      :action="`${$rootUrl}/Base_Manage/Upload/UploadFile`"
       listType="picture-card"
       :headers="headers"
       :fileList="fileList"

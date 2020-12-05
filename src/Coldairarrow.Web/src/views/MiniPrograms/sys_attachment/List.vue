@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <a-card :bordered="false">
     <div class="table-operator">
       <a-button type="primary" icon="plus" @click="hanldleAdd()">新建</a-button>
@@ -18,10 +18,9 @@
           <a-col :md="4" :sm="24">
             <a-form-item label="查询类别">
               <a-select allowClear v-model="queryParam.condition">
-                <a-select-option key="ModuleName">模组</a-select-option>
-                <a-select-option key="Commodities_Id">商品</a-select-option>
-                <a-select-option key="Attachment_Id">商品活动图片</a-select-option>
-                <a-select-option key="Description">备注</a-select-option>
+                <a-select-option key="FileName">文件名</a-select-option>
+                <a-select-option key="FileExt">文件后缀名</a-select-option>
+                <a-select-option key="FilePath">文件存储相对路径</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
@@ -67,11 +66,10 @@
 import EditForm from './EditForm'
 
 const columns = [
-  { title: '模组', dataIndex: 'ModuleName', width: '10%' },
-  { title: '商品名称', dataIndex: 'Commodities_Id', width: '10%' },
-  { title: '商品图片', dataIndex: 'Attachment_Id', width: '10%' },
-  { title: '备注', dataIndex: 'Description', width: '10%' },
-  { title: '排序', dataIndex: 'Sort', width: '10%' },
+  { title: '文件名', dataIndex: 'FileName', width: '10%' },
+  { title: '文件后缀名', dataIndex: 'FileExt', width: '10%' },
+  { title: '文件大小', dataIndex: 'FileSize', width: '10%' },
+  { title: '文件存储相对路径', dataIndex: 'FilePath', width: '10%' },
   { title: '操作', dataIndex: 'action', scopedSlots: { customRender: 'action' } }
 ]
 
@@ -91,7 +89,7 @@ export default {
         showTotal: (total, range) => `总数:${total} 当前:${range[0]}-${range[1]}`
       },
       filters: {},
-      sorter: { field: 'CreateTime', order: 'desc' },
+      sorter: { field: 'Id', order: 'asc' },
       loading: false,
       columns,
       queryParam: {},
@@ -110,7 +108,7 @@ export default {
 
       this.loading = true
       this.$http
-        .post('/MiniPrograms/mini_mainpage_product/GetDataList', {
+        .post('/MiniPrograms/sys_attachment/GetDataList', {
           PageIndex: this.pagination.current,
           PageRows: this.pagination.pageSize,
           SortField: this.sorter.field || 'Id',
@@ -144,7 +142,7 @@ export default {
         title: '确认删除吗?',
         onOk() {
           return new Promise((resolve, reject) => {
-            thisObj.$http.post('/MiniPrograms/mini_mainpage_product/DeleteData', ids).then(resJson => {
+            thisObj.$http.post('/MiniPrograms/sys_attachment/DeleteData', ids).then(resJson => {
               resolve()
 
               if (resJson.Success) {

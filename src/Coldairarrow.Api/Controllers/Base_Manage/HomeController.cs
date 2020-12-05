@@ -1,7 +1,9 @@
 ﻿using Coldairarrow.Business.Base_Manage;
+using Coldairarrow.Business.MiniPrograms;
 using Coldairarrow.IBusiness;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Coldairarrow.Api.Controllers.Base_Manage
@@ -14,17 +16,20 @@ namespace Coldairarrow.Api.Controllers.Base_Manage
     {
         readonly IHomeBusiness _homeBus;
         readonly IPermissionBusiness _permissionBus;
+        readonly Imini_project_userBusiness _mini_project_userBusiness;
         readonly IBase_UserBusiness _userBus;
         readonly IOperator _operator;
         public HomeController(
             IHomeBusiness homeBus,
             IPermissionBusiness permissionBus,
+            Imini_project_userBusiness mini_project_userBusiness,
             IBase_UserBusiness userBus,
             IOperator @operator
             )
         {
             _homeBus = homeBus;
             _permissionBus = permissionBus;
+            _mini_project_userBusiness = mini_project_userBusiness;
             _userBus = userBus;
             _operator = @operator;
         }
@@ -51,10 +56,12 @@ namespace Coldairarrow.Api.Controllers.Base_Manage
         {
             var theInfo = await _userBus.GetTheDataAsync(_operator.UserId);
             var permissions = await _permissionBus.GetUserPermissionValuesAsync(_operator.UserId);
+            var projectList = await _mini_project_userBusiness.GetUserProjectListAsync(_operator.UserId);
             var resObj = new
             {
                 UserInfo = theInfo,
-                Permissions = permissions
+                Permissions = permissions,
+                ProjectList = projectList
             };
 
             return resObj;

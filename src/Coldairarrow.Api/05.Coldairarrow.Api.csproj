@@ -23,6 +23,9 @@
     <Message Text="Copying reference files to $(PublishDir)" Importance="High" />
     <Copy SourceFiles="@(ReferenceFiles)" DestinationFolder="$(PublishDir)" Condition="Exists('%(RootDir)%(Directory)%(Filename)%(Extension)')" />
   </Target>
+  <ItemGroup>
+    <Compile Remove="Controllers\MiniPrograms\sys_attachmentController.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Colder.Logging.Serilog" Version="1.0.2" />

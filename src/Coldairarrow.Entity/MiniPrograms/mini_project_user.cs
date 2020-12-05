@@ -5,10 +5,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Coldairarrow.Entity.MiniPrograms
 {
     /// <summary>
-    /// mini_mainpage_product
+    /// mini_project_user
     /// </summary>
-    [Table("mini_mainpage_product")]
-    public class mini_mainpage_product
+    [Table("mini_project_user")]
+    public class mini_project_user
     {
 
         /// <summary>
@@ -18,29 +18,14 @@ namespace Coldairarrow.Entity.MiniPrograms
         public String Id { get; set; }
 
         /// <summary>
-        /// 模组
+        /// 项目ID
         /// </summary>
-        public String Module_Id { get; set; }
+        public String Project_Id { get; set; }
 
         /// <summary>
-        /// 商品
+        /// 用户ID
         /// </summary>
-        public String Commodities_Id { get; set; }
-
-        /// <summary>
-        /// 商品活动图片
-        /// </summary>
-        public String Attachment_Id { get; set; }
-
-        /// <summary>
-        /// 备注
-        /// </summary>
-        public String Description { get; set; }
-
-        /// <summary>
-        /// 排序字段
-        /// </summary>
-        public Single? Sort { get; set; }
+        public String User_Id { get; set; }
 
         /// <summary>
         /// 创建人Id

@@ -17,6 +17,7 @@
     <PackageReference Include="CSRedisCore" Version="3.6.5" />
     <PackageReference Include="EFCore.Sharding.MySql" Version="3.1.8.4" />
     <PackageReference Include="EFCore.Sharding.SqlServer" Version="3.1.8.4" />
+    <PackageReference Include="FastDFSNetCore" Version="1.2.7" />
     <PackageReference Include="IdHelper.Zookeeper" Version="1.5.1" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />

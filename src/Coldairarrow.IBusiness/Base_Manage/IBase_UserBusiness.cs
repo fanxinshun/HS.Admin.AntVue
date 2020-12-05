@@ -14,6 +14,7 @@ namespace Coldairarrow.Business.Base_Manage
         Task AddDataAsync(UserEditInputDTO input);
         Task UpdateDataAsync(UserEditInputDTO input);
         Task DeleteDataAsync(List<string> ids);
+        Task UpdateUserLastInterviewProject(string project_id);
     }
 
     [Map(typeof(Base_User))]
@@ -21,6 +22,7 @@ namespace Coldairarrow.Business.Base_Manage
     {
         public string newPwd { get; set; }
         public List<string> RoleIdList { get; set; }
+        public List<string> ProjectIdList { get; set; }
     }
 
     public class Base_UsersInputDTO

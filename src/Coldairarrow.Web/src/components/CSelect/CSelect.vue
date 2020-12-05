@@ -4,6 +4,7 @@
     :allowClear="allowClear"
     :showSearch="showSearch"
     :filterOption="filterOption"
+    :disabled="disableds"
     @search="handleSearch"
     @change="handleChange"
     :mode="mode"
@@ -38,6 +39,10 @@ export default {
       default: () => [],
     },
     multiple: {
+      type: Boolean,
+      default: false,
+    },
+    disableds: {
       type: Boolean,
       default: false,
     },
