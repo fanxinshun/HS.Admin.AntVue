@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="MiniPrograms\mini_attachment_module.cs" />
     <Compile Remove="MiniPrograms\sys_attachment.cs" />
   </ItemGroup>
 

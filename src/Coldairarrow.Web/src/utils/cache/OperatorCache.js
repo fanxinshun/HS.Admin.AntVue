@@ -16,11 +16,13 @@ let OperatorCache = {
       callBack()
     else {
       Axios.post('/Base_Manage/Home/GetOperatorInfo').then(resJson => {
-        this.info = resJson.Data.UserInfo
-        this.projectList = resJson.Data.ProjectList
-        permissions = resJson.Data.Permissions
-        inited = true
-        callBack()
+        if (resJson.Success) {
+          this.info = resJson.Data.UserInfo
+          this.projectList = resJson.Data.ProjectList
+          permissions = resJson.Data.Permissions
+          inited = true
+          callBack()
+        }
       })
     }
   },

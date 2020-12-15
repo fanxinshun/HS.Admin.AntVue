@@ -14,20 +14,4 @@ namespace Coldairarrow.Business.MiniPrograms
         Task UpdateDataAsync(mini_attachment_module data);
         Task DeleteDataAsync(List<string> ids);
     }
-
-    ///// <summary>
-    ///// 图片信息DTO
-    ///// </summary>
-    //public class AttachmentDTO : sys_attachment
-    //{
-    //    /// <summary>
-    //    /// 组件Id
-    //    /// </summary>
-    //    public String Component_Id { get; set; }
-
-    //    /// <summary>
-    //    /// 图片Id
-    //    /// </summary>
-    //    public String Attachment_Id { get; set; }
-    //}
 }

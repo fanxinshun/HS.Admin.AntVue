@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <a-card :bordered="false">
     <div class="table-operator">
       <a-button type="primary" icon="plus" @click="hanldleAdd()">新建</a-button>
@@ -18,7 +18,7 @@
           <a-col :md="4" :sm="24">
             <a-form-item label="查询类别">
               <a-select allowClear v-model="queryParam.condition">
-                <a-select-option key="Project">项目地编号</a-select-option>
+                <a-select-option key="Project_Code">项目地编号</a-select-option>
                 <a-select-option key="Project_Name">项目地名称</a-select-option>
               </a-select>
             </a-form-item>
@@ -65,7 +65,7 @@
 import EditForm from './EditForm'
 
 const columns = [
-  { title: '项目地编号', dataIndex: 'Project', width: '10%' },
+  { title: '项目地编号', dataIndex: 'Project_Code', width: '10%' },
   { title: '项目地名称', dataIndex: 'Project_Name', width: '10%' },
   { title: '操作', dataIndex: 'action', scopedSlots: { customRender: 'action' } }
 ]

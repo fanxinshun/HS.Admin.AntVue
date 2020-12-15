@@ -23,6 +23,11 @@ namespace Coldairarrow.Entity.MiniPrograms
         public String Component_Id { get; set; }
 
         /// <summary>
+        /// 组件项(组件内有多类图片，用改字段区分)
+        /// </summary>
+        public String Component_Item { get; set; }
+
+        /// <summary>
         /// 图片Id
         /// </summary>
         public String Image_Path { get; set; }

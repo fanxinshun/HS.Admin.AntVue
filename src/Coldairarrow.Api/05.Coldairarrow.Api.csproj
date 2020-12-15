@@ -6,6 +6,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>Coldairarrow.Api</RootNamespace>
     <AssemblyName>Coldairarrow.Api</AssemblyName>
+    <UserSecretsId>420584e6-0dc1-415c-9ef5-6897c5eb5232</UserSecretsId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -24,6 +25,7 @@
     <Copy SourceFiles="@(ReferenceFiles)" DestinationFolder="$(PublishDir)" Condition="Exists('%(RootDir)%(Directory)%(Filename)%(Extension)')" />
   </Target>
   <ItemGroup>
+    <Compile Remove="Controllers\MiniPrograms\mini_attachment_moduleController.cs" />
     <Compile Remove="Controllers\MiniPrograms\sys_attachmentController.cs" />
   </ItemGroup>
 

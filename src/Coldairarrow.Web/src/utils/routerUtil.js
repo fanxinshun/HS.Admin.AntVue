@@ -160,6 +160,7 @@ const generator = (routerMap, parent) => {
     } else if (item.path) {//页面
       currentRouter.path = item.path
       currentRouter.path = currentRouter.path.replace('//', '/')
+      currentRouter.name = currentRouter.path
     }
 
     // 重定向

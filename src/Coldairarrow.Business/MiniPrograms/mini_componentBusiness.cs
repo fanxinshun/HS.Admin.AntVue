@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Coldairarrow.Entity;
 using Coldairarrow.Entity.MiniPrograms;
 using Coldairarrow.Util;
 using EFCore.Sharding;
@@ -27,156 +28,94 @@ namespace Coldairarrow.Business.MiniPrograms
         #region 外部接口
 
         /// <summary>
-        /// 单个用户组件--查询
+        /// 嵌套组件下拉框数据源
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public async Task<MiniComponentDTO> GetMiniComponentAsync(IdInputDTO input)
+        public async Task<List<ComponentTreeDTO>> GetTreeDataListAsync(ComponentTreeInputDTO input)
         {
-            var entityList = await (from a in Db.GetIQueryable<mini_component>()
-                                    join b in Db.GetIQueryable<sys_component>() on a.Sys_Component_Id equals b.Id
-                                    where a.Deleted == false && b.Deleted == false && a.Id == input.id
-                                    select new MiniComponentDTO()
-                                    {
-                                        Id = a.Id,
-                                        Project_Id = a.Project_Id,
-                                        Sys_Component_Id = a.Sys_Component_Id,
-                                        Target_Pages = a.Target_Pages,
-                                        Description = a.Description,
-                                        Component_Name = b.Component_Name
-                                    }).ToListAsync();
-            var entity = entityList.FirstOrDefault();
+            var syscom = await Db.GetIQueryable<mini_component_type>()
+                .Where(x => x.Component_Code == "coms")
+                .Select(y => y.Id)
+                .ToListAsync<string>();
 
-            //查询组件图片
-            if (!entity.IsNullOrEmpty())
-            {
-                var images = await Db.GetIQueryable<mini_attachment_module>()
-                    .Where(x => x.Component_Id == input.id)
-                    .ToListAsync();
-                var fileRootUrl = ConfigHelper.GetValue("FastDFS:FileRootUrl");
-                entity.Images = images.Select(x => fileRootUrl + x.Image_Path).ToList();
-            }
-            return entity;
-        }
-        /// <summary>
-        /// 用户组件列表--查询
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        public async Task<PageResult<MiniComponentDTO>> GetMiniComponentDTOListAsync(PageInput<ConditionDTO> input)
-        {
-            var q = from a in Db.GetIQueryable<mini_component>()
-                    join b in Db.GetIQueryable<sys_component>() on a.Sys_Component_Id equals b.Id
-                    where a.Deleted == false && b.Deleted == false
-                    select new MiniComponentDTO()
-                    {
-                        Id = a.Id,
-                        Project_Id = a.Project_Id,
-                        Sys_Component_Id = a.Sys_Component_Id,
-                        Target_Pages = a.Target_Pages,
-                        Description = a.Description,
-                        Component_Name = b.Component_Name
-                    };
-            var where = LinqHelper.True<MiniComponentDTO>();
-            var search = input.Search;
-
-            //筛选
-            if (!search.Condition.IsNullOrEmpty() && !search.Keyword.IsNullOrEmpty())
-            {
-                var newWhere = DynamicExpressionParser.ParseLambda<MiniComponentDTO, bool>(
-                    ParsingConfig.Default, false, $@"{search.Condition}.Contains(@0)", search.Keyword);
-                where = where.And(newWhere);
-            }
-
-            return await q.Where(where).GetPageResultAsync(input);
-        }
-
-        public async Task<PageResult<mini_component>> GetDataListAsync(PageInput<ConditionDTO> input)
-        {
-            var q = GetIQueryable();
             var where = LinqHelper.True<mini_component>();
-            var search = input.Search;
+            if (!input.parentId.IsNullOrEmpty())
+                where = where.And(x => x.Parent_Component_Id == input.parentId);
 
-            //筛选
-            if (!search.Condition.IsNullOrEmpty() && !search.Keyword.IsNullOrEmpty())
-            {
-                var newWhere = DynamicExpressionParser.ParseLambda<mini_component, bool>(
-                    ParsingConfig.Default, false, $@"{search.Condition}.Contains(@0)", search.Keyword);
-                where = where.And(newWhere);
-            }
-
-            return await q.Where(where).GetPageResultAsync(input);
-        }
-
-        public async Task<mini_component> GetTheDataAsync(string id)
-        {
-            return await GetEntityAsync(id);
-        }
-
-        public async Task AddDataAsync(mini_component data)
-        {
-            await InsertAsync(data);
-        }
-        /// <summary>
-        /// 添加用户组件
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        public async Task AddMiniComponentAsync(MiniComponentDTO data)
-        {
-            await Db.InsertAsync(_mapper.Map<mini_component>(data));
-            if (!data.Images.IsNullOrEmpty() && data.Images.Count > 0)
-            {
-                List<mini_attachment_module> images = data.Images.Select(x => new mini_attachment_module()
+            var list = await GetIQueryable().Where(x => syscom.Contains(x.Sys_Component_Id)).Where(where).ToListAsync();
+            var treeList = list
+                .Select(x => new ComponentTreeDTO
                 {
-                    Id = IdHelper.GetId(),
-                    Component_Id = data.Id,
-                    Image_Path = x,
-                    CreatorId = _operator?.UserId,
-                    CreateTime = DateTime.Now
+                    Id = x.Id,
+                    ParentId = x.Parent_Component_Id,
+                    Text = x.Description,
+                    Value = x.Id
                 }).ToList();
-                await Db.InsertAsync<mini_attachment_module>(images);
-            }
-        }
-        /// <summary>
-        /// 修改用户组件
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        public async Task UpdateMiniComponentAsync(MiniComponentDTO data)
-        {
-            await Db.UpdateAsync(_mapper.Map<mini_component>(data));
 
-            await Db.DeleteAsync<mini_attachment_module>(x => x.Component_Id == data.Id);
-            List<mini_attachment_module> images = data.Images.Select(x => new mini_attachment_module()
-            {
-                Id = IdHelper.GetId(),
-                Component_Id = data.Id,
-                Image_Path = x.Replace(ConfigHelper.GetValue("FastDFS:FileRootUrl"), ""),
-                CreatorId = _operator?.UserId,
-                CreateTime = DateTime.Now
-            }).ToList();
-            await Db.InsertAsync<mini_attachment_module>(images);
-        }
-        public async Task UpdateDataAsync(mini_component data)
-        {
-            await UpdateAsync(data);
-        }
-        /// <summary>
-        /// 删除用户组件
-        /// </summary>
-        /// <param name="ids"></param>
-        /// <returns></returns>
-        public async Task DeleteMiniComponentAsync(List<string> ids)
-        {
-            await DeleteAsync(ids);
-            await Db.DeleteAsync<mini_attachment_module>(x => ids.Contains(x.Component_Id));
+            return TreeHelper.BuildTree(treeList);
         }
 
-        public async Task DeleteDataAsync(List<string> ids)
+        /// <summary>
+        /// 嵌套组件树形结构数据源
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<List<ComponentTreeDTO>> GetTreeDataDetailListAsync(ComponentTreeInputDTO input)
         {
-            await DeleteAsync(ids);
+            var proj_id = _operator?.Property?.Last_Interview_Project;
+
+            var q = from a in Db.GetIQueryable<mini_page>()
+                    join b in Db.GetIQueryable<mini_page_component>() on a.Id equals b.Page_Id
+                    join c in Db.GetIQueryable<mini_component>() on b.Component_Id equals c.Id
+                    join d in Db.GetIQueryable<mini_component_type>() on c.Sys_Component_Id equals d.Id
+                    join e in Db.GetIQueryable<mini_page_type>() on a.Page_Type_Id equals e.Id
+                    where a.Project_Id == c.Project_Id
+                            && a.Project_Id == proj_id
+                            && a.Deleted == false
+                            && b.Deleted == false
+                            && c.Deleted == false
+                            && d.Deleted == false
+                    orderby a.Sort, b.Sort
+                    select new ComponentTreeDTO()
+                    {
+                        Text = c.Description,
+                        Value = c.Id,
+
+                        //页面信息
+                        Page_Id = a.Id,
+                        Project_Id = a.Project_Id,
+                        PageRemark = a.Name,
+                        //组件Module
+                        Id = b.Id,
+                        Sort = b.Sort,
+                        Component_Id = b.Component_Id,
+                        CreatorId = b.CreatorId,
+                        CreateTime = b.CreateTime,
+                        //组件信息
+                        ParentId = c.Parent_Component_Id,
+                        Sys_Component_Id = c.Sys_Component_Id,
+                        Target_Pages = c.Target_Pages,
+                        Tag = c.Tag,
+                        Description = c.Description,
+                        //组件类型
+                        Component_Code = d.Component_Code,
+                        Component_Name = d.Component_Name,
+
+                        PageTypeName = e.Type_Name
+                    };
+
+            var where = LinqHelper.True<ComponentTreeDTO>();
+            if (!input.parentId.IsNullOrEmpty())
+                where = where.And(x => x.ParentId == input.parentId);
+            if (!input.pageId.IsNullOrEmpty())
+                where = where.And(x => x.Page_Id == input.pageId);
+
+            var treeList = await q.Where(where).ToListAsync();
+
+            return TreeHelper.BuildTree(treeList);
         }
+
 
         #endregion
 

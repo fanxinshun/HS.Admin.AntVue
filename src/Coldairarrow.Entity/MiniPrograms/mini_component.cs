@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Coldairarrow.Util;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -23,6 +24,11 @@ namespace Coldairarrow.Entity.MiniPrograms
         public String Project_Id { get; set; }
 
         /// <summary>
+        /// 父级组件
+        /// </summary>
+        public String Parent_Component_Id { get; set; }
+
+        /// <summary>
         /// 系统组件
         /// </summary>
         public String Sys_Component_Id { get; set; }
@@ -33,7 +39,12 @@ namespace Coldairarrow.Entity.MiniPrograms
         public String Target_Pages { get; set; }
 
         /// <summary>
-        /// 描述
+        /// 组件标识码，用于同一个组件展示不同效果
+        /// </summary>
+        public String Tag { get; set; }
+
+        /// <summary>
+        /// 页面组件描述
         /// </summary>
         public String Description { get; set; }
 

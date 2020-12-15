@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="MiniPrograms\Imini_attachment_moduleBusiness.cs" />
     <Compile Remove="MiniPrograms\Isys_attachmentBusiness.cs" />
   </ItemGroup>
 

@@ -492,7 +492,7 @@ namespace Coldairarrow.Business
         /// <returns></returns>
         public async Task<List<SelectOption>> GetOptionListAsync(OptionListInputDTO input, string textFiled, string valueField, IQueryable<T> source = null)
         {
-            PageInput pageInput = new PageInput
+            input.pageInput = input.pageInput ?? new PageInput<List<ConditionDTO>>()
             {
                 PageRows = 10
             };
@@ -511,7 +511,7 @@ namespace Coldairarrow.Business
             {
                 where += $" && it.{textFiled}.Contains(@1)";
             }
-            List<T> newQList = await GetNewQ().Where(where, ids, input.q).GetPageListAsync(pageInput);
+            List<T> newQList = await GetNewQ().Where(where, ids, input.q).GetPageListAsync(input.pageInput);
 
             var resList = selectedList.Concat(newQList).Select(x => new SelectOption
             {

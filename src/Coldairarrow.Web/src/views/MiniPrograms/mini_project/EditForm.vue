@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <a-modal
     :title="title"
     width="40%"
@@ -9,8 +9,8 @@
   >
     <a-spin :spinning="loading">
       <a-form-model ref="form" :model="entity" :rules="rules" v-bind="layout">
-        <a-form-model-item label="项目地编号" prop="Project">
-          <a-input v-model="entity.Project" autocomplete="off" />
+        <a-form-model-item label="项目地编号" prop="Project_Code">
+          <a-input v-model="entity.Project_Code" autocomplete="off" />
         </a-form-model-item>
         <a-form-model-item label="项目地名称" prop="Project_Name">
           <a-input v-model="entity.Project_Name" autocomplete="off" />

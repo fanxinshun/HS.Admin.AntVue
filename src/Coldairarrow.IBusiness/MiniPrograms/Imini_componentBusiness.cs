@@ -8,32 +8,60 @@ namespace Coldairarrow.Business.MiniPrograms
 {
     public interface Imini_componentBusiness
     {
-        Task<PageResult<mini_component>> GetDataListAsync(PageInput<ConditionDTO> input);
-        Task<mini_component> GetTheDataAsync(string id);
-        Task AddDataAsync(mini_component data);
-        Task UpdateDataAsync(mini_component data);
-        Task DeleteDataAsync(List<string> ids);
-        Task<PageResult<MiniComponentDTO>> GetMiniComponentDTOListAsync(PageInput<ConditionDTO> input);
-        Task<MiniComponentDTO> GetMiniComponentAsync(IdInputDTO input);
-        Task AddMiniComponentAsync(MiniComponentDTO data);
-        Task UpdateMiniComponentAsync(MiniComponentDTO data);
-        Task DeleteMiniComponentAsync(List<string> ids);
+        Task<List<ComponentTreeDTO>> GetTreeDataListAsync(ComponentTreeInputDTO input);
+        Task<List<ComponentTreeDTO>> GetTreeDataDetailListAsync(ComponentTreeInputDTO input);
     }
 
     /// <summary>
     /// 用户组件DTO
     /// </summary>
-    //[Map(typeof(mini_component))]
-    public class MiniComponentDTO : mini_component
+    [Map(typeof(mini_component))]
+    public class ComponentTreeDTO : TreeModel
     {
+        public object children { get => Children; }
+        public string title { get => Text; }
+        public string value { get => Id; }
+        public string key { get => Id; }
+
+        /// <summary>
+        /// 页面类型名称
+        /// </summary>
+        public String PageTypeName { get; set; }
+
+        /// <summary>
+        /// 页面描述
+        /// </summary>
+        public String PageRemark { get; set; }
+
+        /// <summary>
+        /// 系统组件编码
+        /// </summary>
+        public String Component_Code { get; set; }
+
         /// <summary>
         /// 系统组件名称
         /// </summary>
         public String Component_Name { get; set; }
-
-        /// <summary>
-        /// 图片ID
-        /// </summary>
-        public List<string> Images { get; set; }
+        public string Page_Id { get; set; }
+        public string Component_Id { get; set; }
+        public string Project_Id { get; set; }
+        public float? Sort { get; set; }
+        public string CreatorId { get; set; }
+        public DateTime CreateTime { get; set; }
+        public string Sys_Component_Id { get; set; }
+        public string Target_Pages { get; set; }
+        public string Description { get; set; }
+        public string Tag { get; set; }
     }
+
+
+    /// <summary>
+    /// 组件属性结构查询条件
+    /// </summary>
+    public class ComponentTreeInputDTO
+    {
+        public string parentId { get; set; }
+        public string pageId { get; set; }
+    }
+
 }

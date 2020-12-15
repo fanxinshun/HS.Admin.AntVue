@@ -24,63 +24,31 @@ namespace Coldairarrow.Api.Controllers.MiniPrograms
         #region 获取
 
         /// <summary>
-        /// 用户组件列表--查询
+        /// 嵌套组件下拉框数据--查询
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<PageResult<MiniComponentDTO>> GetMiniComponentList(PageInput<ConditionDTO> input)
+        public async Task<List<ComponentTreeDTO>> GetTreeDataList(ComponentTreeInputDTO input)
         {
-            return await _mini_componentBus.GetMiniComponentDTOListAsync(input);
+            return await _mini_componentBus.GetTreeDataListAsync(input);
         }
 
         /// <summary>
-        /// 单个用户组件--查询
+        /// 嵌套组件列表页面--查询
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<MiniComponentDTO> GetMiniComponent(IdInputDTO input)
+        public async Task<List<ComponentTreeDTO>> GetTreeDataDetailList(ComponentTreeInputDTO input)
         {
-            return await _mini_componentBus.GetMiniComponentAsync(input);
-        }
-
-        [HttpPost]
-        public async Task<PageResult<mini_component>> GetDataList(PageInput<ConditionDTO> input)
-        {
-            return await _mini_componentBus.GetDataListAsync(input);
-        }
-
-        [HttpPost]
-        public async Task<mini_component> GetTheData(IdInputDTO input)
-        {
-            return await _mini_componentBus.GetTheDataAsync(input.id);
+            return await _mini_componentBus.GetTreeDataDetailListAsync(input);
         }
 
         #endregion
 
         #region 提交
 
-        [HttpPost]
-        public async Task SaveData(MiniComponentDTO data)
-        {
-            if (data.Id.IsNullOrEmpty())
-            {
-                InitEntity(data);
-
-                await _mini_componentBus.AddMiniComponentAsync(data);
-            }
-            else
-            {
-                await _mini_componentBus.UpdateMiniComponentAsync(data);
-            }
-        }
-
-        [HttpPost]
-        public async Task DeleteData(List<string> ids)
-        {
-            await _mini_componentBus.DeleteMiniComponentAsync(ids);
-        }
 
         #endregion
     }
