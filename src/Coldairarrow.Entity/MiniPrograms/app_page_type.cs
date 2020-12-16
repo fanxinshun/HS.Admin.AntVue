@@ -25,7 +25,7 @@ namespace Coldairarrow.Entity.MiniPrograms
         /// <summary>
         /// 类型编号
         /// </summary>
-        public String num { get; set; }
+        public Int32 num { get; set; }
 
         /// <summary>
         /// 排序编号

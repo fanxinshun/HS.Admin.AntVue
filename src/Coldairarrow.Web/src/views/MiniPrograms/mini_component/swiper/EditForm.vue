@@ -7,10 +7,10 @@
         </a-form-model-item>
         <a-form-model-item label="链接到" prop="Type">
           <a-select v-model="entity.Type" allowClear mode="default" @change="typechange">
-            <a-select-option v-for="item in pageTypeData" :key="item.Type_Code">{{ item.Type_Name }}</a-select-option>
+            <a-select-option v-for="item in pageTypeData" :key="item.Type_Id">{{ item.Type_Name }}</a-select-option>
           </a-select>
         </a-form-model-item>
-        <a-form-model-item label="值" prop="Value">
+        <a-form-model-item :label="typeRemark" prop="Value">
           <a-select v-model="entity.Value" allowClear mode="tags" :filterOption="filterOption" @change="valuechange">
             <a-select-option v-for="item in pageData" :key="item.value">{{ item.text }}</a-select-option>
           </a-select>
@@ -54,7 +54,8 @@
         rules: {},
         title: '',
         pageTypeData: [],
-        pageData: []
+        pageData: [],
+        typeRemark: 'SKU ID'
       }
     },
     methods: {
@@ -64,14 +65,18 @@
         )
       },
       typechange(value) {
-        this.entity.Value = ''
-        let patesData = this.pageTypeData.find(x => x.Type_Code == this.entity.Type)
+        this.typeRemark = 'SKU ID'
+        this.pageData = []
+        let patesData = this.pageTypeData.find(x => x.Type_Id == value)
         if (patesData) {
+          this.typeRemark = patesData.Remark || this.typeRemark
           this.pageData = patesData.Pages || []
         }
       },
       valuechange(value) {
-        this.entity.Value = value[value.length - 1]
+        if (value.length > 0) {
+          this.entity.Value = value[value.length - 1]
+        }
       },
       init() {
         this.visible = true
@@ -85,7 +90,7 @@
         this.$http.post('/MiniPrograms/mini_page_type/GetPagePageTypeOptionList').then(resJson => {
           if (resJson.Success) {
             this.pageTypeData = resJson.Data
-            let patesData = this.pageTypeData.find(x => x.Type_Code == this.entity.Type)
+            let patesData = this.pageTypeData.find(x => x.Type_Id == this.entity.Type)
             if (patesData) {
               this.pageData = patesData.Pages || []
             }

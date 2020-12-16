@@ -38,7 +38,7 @@
       }
     },
     mounted() {
-      this.mode = this.multiple ? 'multiple' : 'tags'
+      this.mode = this.multiple ? 'multiple' : 'default'
       if (this.searchMode) {
         this.showSearch = true
         if (this.searchMode == 'local') {

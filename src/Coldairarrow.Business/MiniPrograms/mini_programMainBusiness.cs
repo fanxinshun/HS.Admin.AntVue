@@ -32,26 +32,128 @@ namespace Coldairarrow.Business.MiniPrograms
         [Transactional]
         public async Task UpdateOldPageData()
         {
-            var pageType = await Db.GetIQueryable<app_page_type>().ToListAsync();
-            var mini_page_type = pageType.Select(x => new mini_page_type()
-            {
-                Id = IdHelper.GetId(),
-                Type_Code = x.num,
-                Type_Name = x.name,
-                CreatorId = "Admin",
-                CreateTime = DateTime.Now,
-                Deleted = true
-            }).ToList();
+            await Db.DeleteAllAsync<mini_page_type>();
+            await Db.DeleteAllAsync<mini_page>();
 
+            var dTime = DateTime.Now;
+
+            var mini_page_type = new List<mini_page_type>();
+            mini_page_type.Add(new mini_page_type()
+            {
+                Id = "1",
+                Type_Code = "1",
+                Type_Name = "单品详情页",
+                Remark = "SKU ID",
+                Sort = 1,
+                CreatorId = "Sys",
+                CreateTime = dTime,
+                Deleted = true
+            });
+            mini_page_type.Add(new mini_page_type()
+            {
+                Id = "2",
+                Type_Code = "2",
+                Type_Name = "搜索页",
+                Remark = "参数值",
+                Sort = 2,
+                CreatorId = "Sys",
+                CreateTime = dTime,
+                Deleted = true
+            });
+            mini_page_type.Add(new mini_page_type()
+            {
+                Id = "3",
+                Type_Code = "3",
+                Type_Name = "活动频道静态页",
+                Remark = "URL",
+                Sort = 3,
+                CreatorId = "Sys",
+                CreateTime = dTime,
+                Deleted = true
+            });
+            mini_page_type.Add(new mini_page_type()
+            {
+                Id = "4",
+                Type_Code = "4",
+                Type_Name = "图片展示",
+                Remark = "URL",
+                Sort = 4,
+                CreatorId = "Sys",
+                CreateTime = dTime,
+                Deleted = true
+            });
+            mini_page_type.Add(new mini_page_type()
+            {
+                Id = "5",
+                Type_Code = "5",
+                Type_Name = "我的优惠券",
+                Remark = "我的优惠券",
+                Sort = 5,
+                CreatorId = "Sys",
+                CreateTime = dTime,
+                Deleted = true
+            });
+            mini_page_type.Add(new mini_page_type()
+            {
+                Id = "6",
+                Type_Code = "6",
+                Type_Name = "领券活动",
+                Remark = "活动 ID",
+                Sort = 6,
+                CreatorId = "Sys",
+                CreateTime = dTime,
+                Deleted = true
+            });
+            mini_page_type.Add(new mini_page_type()
+            {
+                Id = "7",
+                Type_Code = "7",
+                Type_Name = "自定义链接",
+                Remark = "自定义链接",
+                Sort = 7,
+                CreatorId = "Sys",
+                CreateTime = dTime,
+                Deleted = true
+            });
+
+            //页面类型
+            int sort = 8;//顺序从第8个开始
+            var pageType = await Db.GetIQueryable<app_page_type>().OrderBy(x => x.num).ToListAsync();
+            for (int i = 0; i < pageType.Count; i++)
+            {
+                var item = new mini_page_type()
+                {
+                    Id = (pageType[i].num + 7).ToString(),
+                    Type_Code = (pageType[i].num + 7).ToString(),
+                    Type_Name = pageType[i].name,
+                    Sort = sort++,
+                    CreatorId = "Sys",
+                    CreateTime = dTime,
+                    Deleted = true
+                };
+                if (item.Id == "8" || item.Id == "9" || item.Id == "10" || item.Id == "12")
+                {
+                    item.Remark = "模版页";
+                }
+                if (item.Id == "15" || item.Id == "44")
+                {
+                    item.Remark = "活动编号";
+                }
+                mini_page_type.Add(item);
+            }
+
+            int j = 0;
+            //页面
             var page = await Db.GetIQueryable<app_page>().ToListAsync();
             var mini_page = page.Select(x => new mini_page()
             {
-                Id = IdHelper.GetId(),
-                Page_Type_Id = mini_page_type.FirstOrDefault(a => a.Type_Code == x.page_type.ToString())?.Id,
+                Id = x.id.ToString(),
+                Page_Type_Id = mini_page_type.FirstOrDefault(a => a.Id == (x.page_type + 7).ToString())?.Id,
                 Code = x.id.ToString(),
                 Name = x.page_name,
-                CreatorId = "Admin",
-                CreateTime = DateTime.Now,
+                Sort = j++,
+                CreatorId = "Sys",
+                CreateTime = dTime,
                 Deleted = true
             }).ToList();
             await Db.InsertAsync<mini_page_type>(mini_page_type);

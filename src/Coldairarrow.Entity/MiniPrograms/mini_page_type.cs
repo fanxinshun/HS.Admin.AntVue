@@ -28,6 +28,11 @@ namespace Coldairarrow.Entity.MiniPrograms
         public String Type_Name { get; set; }
 
         /// <summary>
+        /// 备注
+        /// </summary>
+        public String Remark { get; set; }
+
+        /// <summary>
         /// 排序
         /// </summary>
         public Single? Sort { get; set; }

@@ -72,21 +72,33 @@ namespace Coldairarrow.Business.MiniPrograms
         /// <returns></returns>
         public async Task<List<SelectPageOption>> GetPagePageTypeOptionListAsync()
         {
+            var proj_id = _operator?.Property?.Last_Interview_Project;
             var source = await (from a in Db.GetIQueryable<mini_page_type>()
-                                join b in Db.GetIQueryable<mini_page>() on a.Id equals b.Page_Type_Id
+                                join b in Db.GetIQueryable<mini_page>() on a.Id equals b.Page_Type_Id into ab
+                                from abdata in ab.DefaultIfEmpty()
+                                where abdata.Project_Id == null
+                                || abdata.Project_Id == proj_id && abdata.Deleted == false
+                                orderby a.Sort, abdata.Sort descending
                                 select new
                                 {
-                                    a.Id,
+                                    aId = a.Id,
                                     a.Type_Code,
                                     a.Type_Name,
-                                    b.Code,
-                                    b.Name
+                                    a.Remark,
+                                    aSort = a.Sort,
+                                    bId = abdata.Id,
+                                    abdata.Project_Id,
+                                    abdata.Code,
+                                    abdata.Name,
+                                    bSort = abdata.Sort
                                 }).ToListAsync();
-            var res = source.GroupBy(g => (g.Id, g.Type_Code, g.Type_Name)).Select(group => new SelectPageOption()
+            var res = source.GroupBy(g => (g.aId, g.Type_Code, g.Type_Name, g.Remark)).Select(group => new SelectPageOption()
             {
+                Type_Id = group.Key.aId,
                 Type_Code = group.Key.Type_Code,
                 Type_Name = group.Key.Type_Name,
-                Pages = group.Select(x => new SelectOption() { value = x.Code, text = x.Name }).ToList()
+                Remark = group.Key.Remark,
+                Pages = group.Select(x => new SelectOption() { value = x.bId, text = x.Name }).ToList()
 
             }).ToList();
             return res;

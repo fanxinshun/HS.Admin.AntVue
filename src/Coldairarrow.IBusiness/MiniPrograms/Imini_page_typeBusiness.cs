@@ -1,5 +1,6 @@
 ﻿using Coldairarrow.Entity.MiniPrograms;
 using Coldairarrow.Util;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -19,8 +20,11 @@ namespace Coldairarrow.Business.MiniPrograms
 
     public class SelectPageOption
     {
+        public string Type_Id { get; set; }
         public string Type_Code { get; set; }
         public string Type_Name { get; set; }
+        public string Remark { get; set; }
+        public Single? Sort { get; set; }
         public List<SelectOption> Pages { get; set; }
     }
 }
